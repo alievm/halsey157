@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Blacker'; /* задайте имя шрифта */
+    src: url('./assets/fonts/Blacker-Display-Bold-trial.ttf') format('ttf');
+    font-style: normal;
+  }
+
+
+  @font-face {
+    font-family: "CooperativeDirtyBold";
+    src: url("/src/assets/fonts/cooperative-dirty-bold.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  
+
+  .my-custom-text {
+    font-family: "CooperativeDirtyBold", sans-serif;
+  }
+.dHctdy0\[18px\] {
+    width: 18px;
+}
+.dHctaC0\[18px\] {
+    height: 18px;
+}
+
+.title {
+    font-family: "Playfair Display", serif;
+}
+
+.tag {
+    font-family: "Poppins", serif;
+}
+
+.footer-bg {
+    position: relative; /* чтобы ::after позиционировалось относительно футера */
+  }
+  
+  .footer-bg::after {
+    content: '';
+    position: absolute;
+    top: -17px;
+    width: 100%;
+    height: 55px;
+    background: url("https://www.bths.edu/pics/footer_top_img.png") repeat-x top center;
+  }
+
+  
+  .footer-logo {
+    grid-column: 2 / 3;
+    grid-row: 1;
+    display: flex
+;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
+    margin: -30px 7px 0px 4px;
+    z-index: 1;
+}
