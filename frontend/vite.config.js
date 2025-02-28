@@ -6,12 +6,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
   server: {
-     host: 'halsey157news.com',
-     strictPort: false,
      allowedHosts: true,
-     hmr: {
-        protocol: 'ws',
-        host: 'localhost'
-     }
     }
 })

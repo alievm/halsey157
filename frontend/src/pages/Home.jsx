@@ -176,28 +176,33 @@ const Home = () => {
       </div>
 
       <section className="mt-12">
-  <div className="flex items-center justify-between mb-6">
-    <h2 className="text-3xl tag font-bold text-gray-800">All Articles</h2>
-    <div className="flex gap-4 space-x-4">
-      <RangePicker
-        size="large"
-        onChange={(dates) => setDateRange(dates)}
-      />
-      <Select
-        placeholder="Select interest"
-        style={{ width: 200 }}
-        size="large"
-        onChange={(value) => setSelectedCategory(value)}
-        allowClear
-      >
-        {categories.map((cat) => (
-          <Option key={cat._id} value={cat._id}>
-            {cat.name}
-          </Option>
-        ))}
-      </Select>
-    </div>
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
+  {/* Заголовок */}
+  <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">All Articles</h2>
+
+  {/* Фильтры */}
+  <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
+    <RangePicker
+      size="large"
+      className="w-full lg:w-auto"
+      onChange={(dates) => setDateRange(dates)}
+    />
+    <Select
+      placeholder="Select interest"
+      className="w-full lg:w-[200px]"
+      size="large"
+      onChange={(value) => setSelectedCategory(value)}
+      allowClear
+    >
+      {categories.map((cat) => (
+        <Option key={cat._id} value={cat._id}>
+          {cat.name}
+        </Option>
+      ))}
+    </Select>
   </div>
+</div>
+
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     {loading ? (
       Array.from({ length: 6 }).map((_, index) => (

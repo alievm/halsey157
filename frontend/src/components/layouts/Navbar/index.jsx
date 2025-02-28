@@ -35,17 +35,21 @@ export const Navbar = () => {
 return (
     <>
          <div className="bg-[#0a0080] h-[100px] py-6 w-full gap-5 flex justify-between items-center lg:px-20 px-5">
-      <div className="gap-5 flex justify-start items-center">
-        <img src="/school_logo.png" alt="logo" className="h-[85px]" />
-        <h2 className="font-semibold tag text-white lg:text-xl text-base">
-          Stephen A Halsey <br /> JHS 157
-        </h2>
-      </div>
+         <div className="gap-3 flex justify-start items-center">
+  {/* Логотип */}
+  <img src="/school_logo.png" alt="logo" className="h-[70px] lg:h-[85px]" />
+
+  {/* Название школы */}
+  <h2 className="font-semibold tag text-white lg:text-xl text-base">
+  Halsey 157 News 
+  </h2>
+</div>
+
       <div className="flex items-center gap-5">
         <Link className="text-white text-base bg-white/10 p-2 rounded tag" to="/staff">
           Staff Members
         </Link>
-        <div className="flex gap-3">
+        <div className="lg:flex hidden gap-3">
           <a
             href="https://facebook.com"
             target="_blank"

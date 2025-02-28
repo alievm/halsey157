@@ -9,7 +9,7 @@ router.post('/login', (req, res) => {
     const { username, password } = req.body;
 
     // Проверяем логин и пароль
-    if (username === 'admin' && password === 'admin') {
+    if (username === 'admin102' && password === 'Queens102Street!') {
         // Создаем токен
         const token = jwt.sign({ username: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token });
