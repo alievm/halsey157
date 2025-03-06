@@ -20,7 +20,9 @@ export default function MainLayout() {
     { label: <Link to="/categories">Categories</Link>, key: '/categories' },
     { label: <Link to="/staff">Staff</Link>, key: '/staff' },
     { label: <Link to="/positions">Positions</Link>, key: '/positions' },
-    { label: <Link to="/authors">Authors</Link>, key: '/authors' },
+    { label: <Link to="/morning-announcements">Morning Announcements</Link>, key: '/morning-announcements' },
+    { label: <Link to="/class">Classes</Link>, key: '/class' },
+    // { label: <Link to="/authors">Authors</Link>, key: '/authors' },
    
   ];
 

@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, message, Select, Upload } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 const BASE_URL = import.meta.env.VITE_DIRECTORY_URL;
+
 export default function ArticleForm() {
   const [form] = Form.useForm();
   const { id } = useParams();
@@ -13,18 +16,18 @@ export default function ArticleForm() {
 
   const isEdit = !!id;
 
-  // Загрузка списков категорий и авторов
+  // Загрузка списков категорий и сотрудников
   const fetchData = async () => {
     try {
       const [catRes, authRes] = await Promise.all([
         axios.get('/categories'),
-        axios.get('/authors')
+        axios.get('/staff')
       ]);
       setCategories(catRes.data);
       setAuthors(authRes.data);
     } catch (error) {
       console.error(error);
-      message.error('Error loading categories or authors');
+      message.error('Error loading categories or staff');
     }
   };
 
@@ -39,8 +42,11 @@ export default function ArticleForm() {
           title: article.title,
           description: article.description,
           category: article.category?._id,
-          author: article.author?._id,
-          photo: article.photo ? [{ uid: '-1', name: 'Image', status: 'done', url: `${BASE_URL}${article.photo}` }] : []
+          // Преобразуем массив объектов staff в массив их _id
+          staff: article.staff ? article.staff.map(member => member._id) : [],
+          photo: article.photo
+            ? [{ uid: '-1', name: 'Image', status: 'done', url: `${BASE_URL}${article.photo}` }]
+            : []
         });
       } catch (error) {
         console.error(error);
@@ -64,7 +70,11 @@ export default function ArticleForm() {
       formData.append('title', values.title);
       formData.append('description', values.description);
       formData.append('category', values.category);
-      formData.append('author', values.author);
+      
+      // Для отправки нескольких значений для поля staff добавляем их по отдельности
+      values.staff.forEach(staffId => {
+        formData.append('staff', staffId);
+      });
 
       if (values.photo && values.photo[0]?.originFileObj) {
         formData.append('photo', values.photo[0].originFileObj);
@@ -90,7 +100,6 @@ export default function ArticleForm() {
     }
   };
 
-  // АнтД-шный Upload мы используем в режиме "manual" (т.к. сами отправляем FormData)
   const normFile = (e) => {
     // e = { fileList: [...] }
     return e && e.fileList;
@@ -113,8 +122,10 @@ export default function ArticleForm() {
         <Form.Item
           label="Description"
           name="description"
+          rules={[{ required: true, message: 'Please enter description' }]}
+          getValueFromEvent={(value, delta, source, editor) => editor.getHTML()} // Сохраняем HTML-формат
         >
-          <Input.TextArea rows={4} />
+          <ReactQuill theme="snow" />
         </Form.Item>
 
         <Form.Item
@@ -132,11 +143,11 @@ export default function ArticleForm() {
         </Form.Item>
 
         <Form.Item
-          label="Author"
-          name="author"
-          rules={[{ required: true, message: 'Please select author' }]}
+          label="Staff"
+          name="staff"
+          rules={[{ required: true, message: 'Please select at least one staff member' }]}
         >
-          <Select placeholder="Select author">
+          <Select placeholder="Select staff" mode="multiple">
             {authors.map(author => (
               <Select.Option key={author._id} value={author._id}>
                 {author.name}

@@ -68,6 +68,10 @@ const ClassPage = () => {
   
   const columns = [
     {
+      title: '№',
+      render: (_, record, index) => index + 1,
+    },
+    {
       title: 'Название',
       dataIndex: 'title',
       key: 'title',

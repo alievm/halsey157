@@ -14,6 +14,17 @@
     font-style: normal;
   }
 
+  .text_rev_card_text::-webkit-scrollbar {
+    width: 4px;
+}
+.text_rev_card_text::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(38, 40, 40, 0.3);
+}
+.text_rev_card_text::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: rgb(217, 217, 217);
+}
   
 
   .my-custom-text {

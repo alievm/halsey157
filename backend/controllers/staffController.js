@@ -5,16 +5,38 @@ const Staff = require('../models/Staff');
 // @route GET /api/staff
 exports.getStaff = async (req, res, next) => {
   try {
-    let filter = {};
+    let match = {};
 
     // Если передан параметр "class" в query, добавляем фильтр
     if (req.query.class) {
-      filter.class = req.query.class;
+      match.class = mongoose.Types.ObjectId(req.query.class);
     }
 
-    const staffList = await Staff.find(filter)
-      .populate('position', 'name')
-      .populate('class', 'title');
+    const staffList = await Staff.aggregate([
+      { $match: match },
+      {
+        $lookup: {
+          from: 'positions', // имя коллекции для позиций
+          localField: 'position',
+          foreignField: '_id',
+          as: 'position'
+        }
+      },
+      { $unwind: '$position' },
+      {
+        $lookup: {
+          from: 'classes', // имя коллекции для классов
+          localField: 'class',
+          foreignField: '_id',
+          as: 'class'
+        }
+      },
+      { $unwind: '$class' },
+      // Сортировка: сначала по приоритету позиции (ascending: чем меньше значение, тем выше приоритет),
+      // затем по дате создания (ascending)
+      { $sort: { 'position.priority': 1, createdAt: 1 } }
+    ]);
+
     res.json(staffList);
   } catch (error) {
     next(error);

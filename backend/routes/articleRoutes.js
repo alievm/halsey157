@@ -4,13 +4,17 @@ const {
   createArticle,
   getArticleById,
   updateArticle,
-  deleteArticle
+  deleteArticle,
+  getArticlesByStaffId
 } = require('../controllers/articleController');
 const upload = require('../middlewares/upload');
 
 const router = express.Router();
 
-// Загрузка одной картинки (поле "photo" в form-data)
+// Сначала определяем маршрут для получения статей по ID сотрудника
+// router.get('/staff/:staffId/articles', getArticlesByStaffId);
+
+// Основные маршруты для работы со статьями
 router.route('/')
   .get(getArticles)
   .post(upload.single('photo'), createArticle);

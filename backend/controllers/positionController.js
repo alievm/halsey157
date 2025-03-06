@@ -41,10 +41,10 @@ exports.getPositionById = async (req, res, next) => {
 // @route PUT /api/positions/:id
 exports.updatePosition = async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { name, priority } = req.body;
     const updatedPosition = await Position.findByIdAndUpdate(
       req.params.id,
-      { name },
+      { name, priority },
       { new: true }
     );
 

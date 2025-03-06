@@ -131,6 +131,10 @@ const StaffPage = () => {
 
   const columns = [
     {
+      title: '№',
+      render: (_, record, index) => index + 1,
+    },
+    {
       title: 'Photos',
       dataIndex: 'photos',
       render: (photos) => {

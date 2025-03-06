@@ -1,3 +1,4 @@
+// models/Position.js
 const mongoose = require('mongoose');
 
 const positionSchema = new mongoose.Schema(
@@ -6,8 +7,11 @@ const positionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // При необходимости можно добавить дополнительные поля, например:
-    // description: { type: String },
+    // Числовое значение приоритета (чем меньше число, тем выше приоритет)
+    priority: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

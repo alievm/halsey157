@@ -3,6 +3,7 @@ import { Button, Table, message, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 import axios from '../../api/axios';
 const BASE_URL = import.meta.env.VITE_DIRECTORY_URL;
+
 export default function ArticleList() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ export default function ArticleList() {
     try {
       setLoading(true);
       const res = await axios.get('/articles'); 
-      // предполагается, что бэкенд делает populate() для author и category
+      // предполагается, что бэкенд делает populate() для staff и category
       setArticles(res.data);
     } catch (error) {
       console.error(error);
@@ -38,6 +39,10 @@ export default function ArticleList() {
 
   const columns = [
     {
+      title: '№',
+      render: (_, record, index) => index + 1,
+    },
+    {
       title: 'Photo',
       dataIndex: 'photo',
       render: (photo) => (
@@ -55,8 +60,11 @@ export default function ArticleList() {
       render: (_, record) => record.category ? record.category.name : '—',
     },
     {
-      title: 'Author',
-      render: (_, record) => record.author ? record.author.name : '—',
+      title: 'Staff',
+      render: (_, record) =>
+        record.staff && record.staff.length > 0
+          ? record.staff.map(member => member.name).join(', ')
+          : '—',
     },
     {
       title: 'Actions',

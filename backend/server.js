@@ -12,6 +12,7 @@ const staffRoutes = require('./routes/staffRoutes');
 const positionRoutes = require('./routes/positionRoutes');
 const authorRoutes = require('./routes/authorRoutes');
 const classRoutes = require('./routes/classRoutes');
+const morningAnnouncementRoutes = require('./routes/morningAnnouncementRoutes');
 dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const articleRoutes = require('./routes/articleRoutes');
@@ -29,7 +30,7 @@ app.use("/api/authors", authorRoutes);
 app.use("/api/articles", articleRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use('/api/morning-announcements', morningAnnouncementRoutes);
 app.use("/api/positions", positionRoutes);
 app.use("/api/staff", staffRoutes);
 app.use('/api/classes', classRoutes);

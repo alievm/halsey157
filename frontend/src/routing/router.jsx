@@ -5,6 +5,7 @@ import Home from '../pages/Home';
 import Layout from '../components/layouts/Layout';
 import ArticlePage from '../pages/ArticlePage';
 import Staff from '../pages/Staff';
+import StaffDetailPage from '../pages/StaffDetailPage';
 
 const AppRouter = () => (
  <>
@@ -13,6 +14,7 @@ const AppRouter = () => (
       <Route path="/" element={<Layout />}>
         <Route path='/staff' element={<Staff />} />
         <Route index element={<Home />} />
+        <Route path="staff/:id" element={<StaffDetailPage />} />
         <Route path="/article/:id" element={<ArticlePage />} />
       </Route>
     </Routes>

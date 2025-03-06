@@ -37,6 +37,10 @@ export default function CategoryList() {
 
   const columns = [
     {
+      title: '№',
+      render: (_, record, index) => index + 1,
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
     },

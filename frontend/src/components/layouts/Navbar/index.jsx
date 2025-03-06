@@ -46,23 +46,19 @@ return (
 </div>
 
       <div className="flex items-center gap-5">
+        <Link className="text-white text-base bg-white/10 p-2 rounded tag" to="/">
+          Homepage
+        </Link>
         <Link className="text-white text-base bg-white/10 p-2 rounded tag" to="/staff">
           Staff Members
         </Link>
         <div className="lg:flex hidden gap-3">
           <a
-            href="https://facebook.com"
+            href="https://www.facebook.com/Halsey157pa/"
             target="_blank"
             rel="noopener noreferrer"
           >
             <FaFacebook className="text-white text-2xl" />
-          </a>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaTwitter className="text-white text-2xl" />
           </a>
           <a
             href="https://instagram.com"

@@ -12,6 +12,7 @@ import PrivateRoute from '../guard/PrivateRoute';
 import PositionsPage from '../pages/PositionsPage';
 import StaffPage from '../pages/StaffPage';
 import ClassPage from '../pages/ClassPage';
+import AdminMorningAnnouncements from '../pages/MorningAnnouncements';
 
 export default function AppRouter() {
   return (
@@ -34,6 +35,7 @@ export default function AppRouter() {
         <Route path="/positions" index element={<PositionsPage />} />
         <Route path="/staff" index element={<StaffPage />} />
         <Route path="/class" index element={<ClassPage />} />
+        <Route path="/morning-announcements" index element={<AdminMorningAnnouncements />} />
         <Route path="articles/create" element={<ArticleForm />} />
         <Route path="articles/edit/:id" element={<ArticleForm />} />
 

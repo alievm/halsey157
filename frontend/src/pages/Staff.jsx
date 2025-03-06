@@ -1,9 +1,7 @@
 // src/pages/StaffGridPage.js
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axios'; // Ваш настроенный axios instance
-import { Select } from 'antd';
 import { Link } from 'react-router-dom';
-const { Option } = Select;
 const BASE_URL = import.meta.env.VITE_DIRECTORY_URL;
 
 const Staff = () => {
@@ -64,24 +62,44 @@ const Staff = () => {
             <li className="text-gray-500">All Staff Members</li>
           </ol>
         </nav>
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl tag font-bold text-gray-800">
             All Staff Members
           </h2>
-          <Select
-            size="large"
-            value={selectedClass || undefined}
-            onChange={(value) => setSelectedClass(value)}
-            placeholder="Filter by Class"
-            allowClear
-            style={{ width: 200 }}
-          >
-            {classes.map((cls) => (
-              <Option key={cls._id} value={cls._id}>
-                {cls.title}
-              </Option>
-            ))}
-          </Select>
+          {/* Кастомное темное меню */}
+          <div className="relative inline-block text-left group">
+            <button className="bg-[#0b0080] text-white py-2 px-4 rounded-md focus:outline-none flex items-center">
+              {selectedClass
+                ? classes.find((cls) => cls._id === selectedClass)?.title
+                : "Select a class"}
+              <svg
+                className="ml-2 h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div className="absolute overflow-hidden right-0 mt-2 w-48 bg-[#0b0080] rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+              <div
+                className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
+                onClick={() => setSelectedClass("")}
+              >
+                All Classes
+              </div>
+              {classes.map((cls) => (
+                <div
+                  key={cls._id}
+                  className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
+                  onClick={() => setSelectedClass(cls._id)}
+                >
+                  {cls.title}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Сетка карточек */}
@@ -109,14 +127,10 @@ const Staff = () => {
             ))
           ) : (
             staff.map((person) => (
-              <div
-                key={person._id}
-                className="bg-gray-100 rounded overflow-hidden"
-              >
-                {/* Верхняя часть карточки: коллаж из 3 фото */}
-                <div className="grid grid-cols-2 gap-1">
-                  {/* Левая колонка (большее фото) */}
-                  <div className="h-full">
+              <Link key={person._id} to={`/staff/${person._id}`} className="block">
+                <div className="bg-gray-100 rounded overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  {/* Верхняя часть карточки: коллаж из 3 фото */}
+                  <div className="grid grid-cols-1 gap-1">
                     {person.photos?.[0] ? (
                       <img
                         src={`${BASE_URL}${person.photos[0]}`}
@@ -130,64 +144,34 @@ const Staff = () => {
                     )}
                   </div>
 
-                  {/* Правая колонка (два фото сверху и снизу) */}
-                  <div className="flex flex-col gap-1">
-                    <div className="h-1/2">
-                      {person.photos?.[1] ? (
-                        <img
-                          src={`${BASE_URL}${person.photos[1]}`}
-                          alt={person.name}
-                          className="object-cover w-full h-[150px] filter"
-                        />
-                      ) : (
-                        <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500">
-                          No photo
-                        </div>
-                      )}
+                  {/* Нижняя часть карточки: имя, должность и описание */}
+                  <div>
+                    <div
+                      style={{
+                        background: 'url(/ип.svg) no-repeat center center/cover',
+                      }}
+                      className="p-4"
+                    >
+                      <h3 className="text-2xl text-white font-bold my-custom-text">
+                        {person.name}
+                      </h3>
                     </div>
-                    <div className="h-1/2">
-                      {person.photos?.[2] ? (
-                        <img
-                          src={`${BASE_URL}${person.photos[2]}`}
-                          alt={person.name}
-                          className="object-cover w-full h-[150px] filter"
-                        />
-                      ) : (
-                        <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500">
-                          No photo
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Нижняя часть карточки: имя, должность и описание */}
-                <div>
-                  <div
-                    style={{
-                      background: 'url(/ип.svg) no-repeat center center/cover',
-                    }}
-                    className="p-4"
-                  >
-                    <h3 className="text-2xl text-white font-bold my-custom-text">
+                    {person.position?.name && (
+                      <p className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-sm font-medium my-2 mx-auto">
+                        {person.position.name}
+                      </p>
+                    )}
+                    <h3 className="text-xl text-center tag font-semibold">
                       {person.name}
                     </h3>
-                  </div>
-                  {person.position?.name && (
-                    <p className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-sm font-medium my-2 mx-auto">
-                      {person.position.name}
-                    </p>
-                  )}
-                  <h3 className="text-xl text-center tag font-semibold">
-                    {person.name}
-                  </h3>
-                  <div className="p-2 text-center">
-                    <p className="text-gray-700 line-clamp-3">
-                      {person.description}
-                    </p>
+                    <div className="p-2 text-center">
+                      <p className="text-gray-700 line-clamp-3">
+                        {person.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>

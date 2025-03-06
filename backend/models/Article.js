@@ -9,7 +9,7 @@ const articleSchema = new mongoose.Schema({
     type: String
   },
   photo: {
-    type: String, 
+    type: String,
     // здесь будет храниться путь/имя файла (например, 'uploads/имя_фото.jpg')
   },
   category: {
@@ -17,10 +17,14 @@ const articleSchema = new mongoose.Schema({
     ref: 'Category',
     required: true
   },
-  author: {
+  staff: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Author',
+    ref: 'Staff',
     required: true
+  }],
+  views: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true });
 

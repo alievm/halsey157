@@ -1,6 +1,6 @@
 // src/pages/PositionsPage.js
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, message, Popconfirm } from 'antd';
+import { Table, Button, Modal, Form, Input, Slider, message, Popconfirm } from 'antd';
 import axios from '../api/axios';
 
 const PositionsPage = () => {
@@ -22,7 +22,9 @@ const PositionsPage = () => {
     try {
       setLoading(true);
       const res = await axios.get('/positions');
-      setPositions(res.data);
+      // Сортировка на клиенте по приоритету (если сервер не сортирует)
+      const sortedPositions = res.data.sort((a, b) => a.priority - b.priority);
+      setPositions(sortedPositions);
     } catch (error) {
       message.error('Error fetching positions');
     } finally {
@@ -38,7 +40,7 @@ const PositionsPage = () => {
 
   const handleEdit = (record) => {
     setEditingPosition(record);
-    form.setFieldsValue({ name: record.name });
+    form.setFieldsValue({ name: record.name, priority: record.priority });
     setIsModalOpen(true);
   };
 
@@ -75,8 +77,17 @@ const PositionsPage = () => {
 
   const columns = [
     {
+      title: '№',
+      render: (_, record, index) => index + 1,
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
+    },
+    {
+      title: 'Priority',
+      dataIndex: 'priority',
+      sorter: (a, b) => a.priority - b.priority,
     },
     {
       title: 'Actions',
@@ -85,10 +96,7 @@ const PositionsPage = () => {
           <Button type="primary" onClick={() => handleEdit(record)}>
             Edit
           </Button>
-          <Popconfirm
-            title="Are you sure?"
-            onConfirm={() => handleDelete(record._id)}
-          >
+          <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record._id)}>
             <Button danger>Delete</Button>
           </Popconfirm>
         </div>
@@ -104,12 +112,7 @@ const PositionsPage = () => {
           Add Position
         </Button>
       </div>
-      <Table
-        columns={columns}
-        dataSource={positions}
-        rowKey={(record) => record._id}
-        loading={loading}
-      />
+      <Table columns={columns} dataSource={positions} rowKey={(record) => record._id} loading={loading} />
 
       <Modal
         title={editingPosition ? 'Edit Position' : 'Create Position'}
@@ -124,6 +127,14 @@ const PositionsPage = () => {
             rules={[{ required: true, message: 'Please enter position name' }]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            label="Priority"
+            name="priority"
+            rules={[{ required: true, message: 'Please set position priority' }]}
+            initialValue={0}
+          >
+            <Slider min={0} max={20} />
           </Form.Item>
         </Form>
       </Modal>

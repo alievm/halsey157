@@ -5,10 +5,8 @@ const path = require('path');
 // @route GET /api/articles
 exports.getArticles = async (req, res, next) => {
   try {
-    // Формируем объект фильтрации
     let filter = {};
 
-    // Если переданы параметры startDate и/или endDate, добавляем фильтр по дате
     if (req.query.startDate || req.query.endDate) {
       filter.createdAt = {};
       if (req.query.startDate) {
@@ -19,14 +17,12 @@ exports.getArticles = async (req, res, next) => {
       }
     }
 
-    // Если передан параметр category, добавляем фильтр по категории
     if (req.query.category) {
       filter.category = req.query.category;
     }
 
-    // Подгружаем связанные поля author и category, применяя фильтр
     const articles = await Article.find(filter)
-      .populate('author', 'name bio')
+      .populate('staff', 'name description') // подгружаем данные стаффа
       .populate('category', 'name');
     res.json(articles);
   } catch (error) {
@@ -39,7 +35,7 @@ exports.getArticles = async (req, res, next) => {
 // @route POST /api/articles
 exports.createArticle = async (req, res, next) => {
   try {
-    const { title, description, category, author } = req.body;
+    const { title, description, category, staff } = req.body; // staff теперь должен быть массивом id
 
     // Если multer загружает файл, имя сохраняется в req.file
     let photoPath = null;
@@ -51,7 +47,7 @@ exports.createArticle = async (req, res, next) => {
       title,
       description,
       category,
-      author,
+      staff,  // здесь передаём массив идентификаторов сотрудников
       photo: photoPath
     });
 
@@ -65,9 +61,14 @@ exports.createArticle = async (req, res, next) => {
 // @route GET /api/articles/:id
 exports.getArticleById = async (req, res, next) => {
   try {
-    const article = await Article.findById(req.params.id)
-      .populate('author', 'name bio')
-      .populate('category', 'name');
+    const article = await Article.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { views: 1 } }, // увеличение счетчика просмотров
+      { new: true }
+    )
+    .populate('staff', 'name description')
+    .populate('category', 'name');
+
     if (!article) {
       return res.status(404).json({ message: 'Article not found' });
     }
@@ -81,11 +82,10 @@ exports.getArticleById = async (req, res, next) => {
 // @route PUT /api/articles/:id
 exports.updateArticle = async (req, res, next) => {
   try {
-    const { title, description, category, author } = req.body;
+    const { title, description, category, staff } = req.body;
 
-    const updateData = { title, description, category, author };
+    const updateData = { title, description, category, staff };
 
-    // Если есть новое фото
     if (req.file) {
       updateData.photo = req.file.path;
     }
@@ -117,6 +117,19 @@ exports.deleteArticle = async (req, res, next) => {
     // При желании, можно удалять файл фото с сервера (если нужно)
     // fs.unlinkSync(deletedArticle.photo) — осторожно, только если точно используете локальное хранение
     res.json({ message: 'Article deleted' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+exports.getArticlesByStaffId = async (req, res, next) => {
+  try {
+    const staffId = req.params.staffId;
+    const articles = await Article.find({ staff: { $in: [staffId] } })
+      .populate('staff', 'name description')
+      .populate('category', 'name');
+    res.json(articles);
   } catch (error) {
     next(error);
   }
