@@ -35,6 +35,7 @@ export const Navbar = () => {
 return (
     <>
          <div className="bg-[#0a0080] h-[100px] py-6 w-full gap-5 flex justify-between items-center lg:px-20 px-5">
+        <Link to='/'>
          <div className="gap-3 flex justify-start items-center">
   {/* Логотип */}
   <img src="/school_logo.png" alt="logo" className="h-[70px] lg:h-[85px]" />
@@ -43,14 +44,14 @@ return (
   <h2 className="font-semibold tag text-white lg:text-xl text-base">
   Halsey 157 News 
   </h2>
-</div>
+</div></Link>
 
       <div className="flex items-center gap-5">
         <Link className="text-white text-base bg-white/10 p-2 rounded tag" to="/">
-          Homepage
+          Home
         </Link>
         <Link className="text-white text-base bg-white/10 p-2 rounded tag" to="/staff">
-          Staff Members
+          Staff
         </Link>
         <div className="lg:flex hidden gap-3">
           <a

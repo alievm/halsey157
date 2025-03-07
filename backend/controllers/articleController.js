@@ -66,7 +66,7 @@ exports.getArticleById = async (req, res, next) => {
       { $inc: { views: 1 } }, // увеличение счетчика просмотров
       { new: true }
     )
-    .populate('staff', 'name description')
+    .populate('staff', 'name description photos')
     .populate('category', 'name');
 
     if (!article) {
@@ -127,7 +127,7 @@ exports.getArticlesByStaffId = async (req, res, next) => {
   try {
     const staffId = req.params.staffId;
     const articles = await Article.find({ staff: { $in: [staffId] } })
-      .populate('staff', 'name description')
+      .populate('staff', 'name description photos')
       .populate('category', 'name');
     res.json(articles);
   } catch (error) {

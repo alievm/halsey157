@@ -59,7 +59,9 @@ const Staff = () => {
             <li>
               <span className="mx-2">/</span>
             </li>
-            <li className="text-gray-500">All Staff Members</li>
+            <li className="text-gray-500">{selectedClass
+      ? classes.find((cls) => cls._id === selectedClass)?.title
+      : "All Staff Members"}</li>
           </ol>
         </nav>
         <div className="flex justify-between items-center mb-4">
@@ -83,12 +85,12 @@ const Staff = () => {
               </svg>
             </button>
             <div className="absolute overflow-hidden right-0 mt-2 w-48 bg-[#0b0080] rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-              <div
+              {/* <div
                 className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
                 onClick={() => setSelectedClass("")}
               >
                 All Classes
-              </div>
+              </div> */}
               {classes.map((cls) => (
                 <div
                   key={cls._id}

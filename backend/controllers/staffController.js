@@ -87,8 +87,12 @@ exports.getStaffById = async (req, res, next) => {
 // @route PUT /api/staff/:id
 exports.updateStaff = async (req, res, next) => {
   try {
-    const { name, description, position } = req.body;
+    const { name, description, position, class: classId } = req.body; // добавляем class
     const updateData = { name, description, position };
+
+    if (classId) {
+      updateData.class = classId; // обновляем поле class, если оно передано
+    }
 
     if (req.files && req.files.length > 0) {
       updateData.photos = req.files.map((file) => file.path);

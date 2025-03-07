@@ -21,7 +21,7 @@ const ClassPage = () => {
       const res = await axios.get('/classes');
       setClasses(res.data);
     } catch (error) {
-      message.error('Ошибка загрузки классов');
+      message.error('Error loading classes');
     } finally {
       setLoading(false);
     }
@@ -42,10 +42,10 @@ const ClassPage = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/classes/${id}`);
-      message.success('Класс удален');
+      message.success('Class deleted');
       fetchClasses();
     } catch (error) {
-      message.error('Ошибка удаления класса');
+      message.error('Error deleting class');
     }
   };
   
@@ -54,41 +54,41 @@ const ClassPage = () => {
       const values = await form.validateFields();
       if (editingClass) {
         await axios.put(`/classes/${editingClass._id}`, values);
-        message.success('Класс обновлен');
+        message.success('Class updated');
       } else {
         await axios.post('/classes', values);
-        message.success('Класс создан');
+        message.success('Class created');
       }
       setIsModalOpen(false);
       fetchClasses();
     } catch (error) {
-      message.error('Ошибка при сохранении класса');
+      message.error('Error saving class');
     }
   };
   
   const columns = [
     {
-      title: '№',
+      title: 'No.',
       render: (_, record, index) => index + 1,
     },
     {
-      title: 'Название',
+      title: 'Title',
       dataIndex: 'title',
       key: 'title',
     },
     {
-      title: 'Действия',
+      title: 'Actions',
       key: 'actions',
       render: (text, record) => (
         <div className="flex gap-2">
           <Button type="primary" onClick={() => handleEdit(record)}>
-            Редактировать
+            Edit
           </Button>
           <Popconfirm
-            title="Вы уверены?"
+            title="Are you sure?"
             onConfirm={() => handleDelete(record._id)}
           >
-            <Button danger>Удалить</Button>
+            <Button danger>Delete</Button>
           </Popconfirm>
         </div>
       ),
@@ -98,9 +98,9 @@ const ClassPage = () => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Классы</h1>
+        <h1 className="text-2xl font-bold">Classes</h1>
         <Button type="primary" onClick={handleCreate}>
-          Добавить класс
+          Add Class
         </Button>
       </div>
       
@@ -112,16 +112,16 @@ const ClassPage = () => {
       />
       
       <Modal
-        title={editingClass ? 'Редактировать класс' : 'Создать класс'}
+        title={editingClass ? 'Edit Class' : 'Create Class'}
         visible={isModalOpen}
         onOk={handleOk}
         onCancel={() => setIsModalOpen(false)}
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Название"
+            label="Title"
             name="title"
-            rules={[{ required: true, message: 'Введите название класса' }]}
+            rules={[{ required: true, message: 'Please enter the class name' }]}
           >
             <Input />
           </Form.Item>
