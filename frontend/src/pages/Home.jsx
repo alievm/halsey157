@@ -121,7 +121,7 @@ const Home = () => {
       {/* Мобильная версия блока Morning Announcements */}
       <div className="md:hidden mb-4">
         <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-2xl relative flex items-center justify-between font-bold text-gray-800 border-b-2 border-[#0a0080] pb-2 mb-4">
+          <h2 className="text-lg relative flex items-center justify-between font-bold text-gray-800 border-b-2 border-[#0a0080] pb-2 mb-4">
             Morning Announcements
             <img
               src="/presentation-board-megaphone-speaker-3d-render-illustration-minimal-cartoon-style-isolated-white-background.png"
@@ -132,7 +132,7 @@ const Home = () => {
           <div className="h-64 text_rev_card_text p-2 overflow-y-auto space-y-4 mb-8">
             {loadingAnnouncements ? (
               Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="p-4 border border-[#AEAEAE]/20 rounded shadow animate-pulse">
+                <div key={index} className="p-4 border border-gray-200 rounded shadow animate-pulse">
                   <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
                   <div className="h-3 bg-gray-300 rounded w-1/2"></div>
                 </div>
@@ -145,7 +145,7 @@ const Home = () => {
                 return (
                   <div
                     key={announcement._id}
-                    className="p-4 border border-[#AEAEAE]/20 rounded-xl hover:shadow-md transition-shadow"
+                    className="p-4 border border-gray-200 rounded-xl hover:shadow-md transition-shadow"
                   >
                     <h3 className="font-semibold title text-base">{announcement.title}</h3>
                     <p className="text-gray-600 tag text-sm" dangerouslySetInnerHTML={{ __html: announcement.description }}></p>
