@@ -1,4 +1,3 @@
-// src/pages/StaffPage.js
 import React, { useEffect, useState } from 'react';
 import {
   Table,
@@ -12,20 +11,46 @@ import {
   Popconfirm,
 } from 'antd';
 import axios from '../api/axios';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, SearchOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 const BASE_URL = import.meta.env.VITE_DIRECTORY_URL;
+
+// Функция подсветки искомого текста
+function highlightText(text = '', highlight = '') {
+  if (!highlight) return text;
+
+  const lowerText = text.toLowerCase();
+  const lowerHighlight = highlight.toLowerCase();
+  const startIndex = lowerText.indexOf(lowerHighlight);
+
+  if (startIndex === -1) {
+    // Совпадений нет
+    return text;
+  }
+
+  const endIndex = startIndex + highlight.length;
+  return (
+    <>
+      {text.substring(0, startIndex)}
+      <span style={{ backgroundColor: 'yellow', fontWeight: 'bold' }}>
+        {text.substring(startIndex, endIndex)}
+      </span>
+      {text.substring(endIndex)}
+    </>
+  );
+}
+
 const StaffPage = () => {
   const [staff, setStaff] = useState([]);
   const [positions, setPositions] = useState([]);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Состояние для модального окна (создание/редактирование)
+  const [searchText, setSearchText] = useState(''); // <-- Состояние для поиска
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
-
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -76,7 +101,8 @@ const StaffPage = () => {
       name: record.name,
       description: record.description,
       position: record.position?._id,
-      class: record.class?._id, // заполняем select класса
+      class: record.class?._id,
+      // Если есть year, тоже заполняйте
     });
     setIsModalOpen(true);
   };
@@ -95,14 +121,12 @@ const StaffPage = () => {
     try {
       const values = await form.validateFields();
 
-      // Используем FormData для отправки файлов и остальных данных
       const formData = new FormData();
       formData.append('name', values.name);
       formData.append('description', values.description || '');
       formData.append('position', values.position);
       formData.append('class', values.class);
 
-      // Если выбраны файлы, добавляем каждый файл с именем поля "photos"
       if (values.photos && values.photos.fileList) {
         values.photos.fileList.forEach((file) => {
           formData.append('photos', file.originFileObj);
@@ -129,14 +153,17 @@ const StaffPage = () => {
     }
   };
 
+  // Определяем колонки
   const columns = [
     {
       title: '№',
-      render: (_, record, index) => index + 1,
+      render: (_, __, index) => index + 1,
+      key: 'index',
     },
     {
       title: 'Photos',
       dataIndex: 'photos',
+      key: 'photos',
       render: (photos) => {
         if (!photos || photos.length === 0) return 'No photos';
         return (
@@ -159,22 +186,51 @@ const StaffPage = () => {
     {
       title: 'Name',
       dataIndex: 'name',
+      key: 'name',
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      // Подсвечиваем найденный текст
+      render: (text) => highlightText(text, searchText),
     },
     {
       title: 'Position',
       dataIndex: ['position', 'name'],
+      key: 'position',
+      // Пример сортировки/фильтров, если нужно
+      sorter: (a, b) => {
+        const posA = a.position?.name || '';
+        const posB = b.position?.name || '';
+        return posA.localeCompare(posB);
+      },
+      filters: positions.map((pos) => ({
+        text: pos.name,
+        value: pos.name,
+      })),
+      onFilter: (value, record) => record.position?.name === value,
     },
     {
       title: 'Class',
       dataIndex: ['class', 'title'],
+      key: 'class',
+      sorter: (a, b) => {
+        const classA = a.class?.title || '';
+        const classB = b.class?.title || '';
+        return classA.localeCompare(classB);
+      },
+      filters: classes.map((cls) => ({
+        text: cls.title,
+        value: cls.title,
+      })),
+      onFilter: (value, record) => record.class?.title === value,
     },
     {
       title: 'Description',
       dataIndex: 'description',
+      key: 'description',
       ellipsis: true,
     },
     {
       title: 'Actions',
+      key: 'actions',
       render: (text, record) => (
         <div className="flex gap-2">
           <Button type="primary" onClick={() => handleEdit(record)}>
@@ -191,24 +247,41 @@ const StaffPage = () => {
     },
   ];
 
+  // Фильтруем staff по searchText
+  const filteredStaff = staff.filter((item) => {
+    if (!searchText) return true;
+    return item.name?.toLowerCase().includes(searchText.toLowerCase());
+  });
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Staff</h1>
+        
+        {/* Поле для ввода поиска по имени */}
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder="Search by name..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 200, marginRight: 8 }}
+        />
+
         <Button type="primary" onClick={handleCreate}>
           Add Staff
         </Button>
       </div>
+
       <Table
         columns={columns}
-        dataSource={staff}
+        dataSource={filteredStaff}
         rowKey={(record) => record._id}
         loading={loading}
       />
 
       <Modal
         title={editingStaff ? 'Edit Staff' : 'Create Staff'}
-        visible={isModalOpen}
+        open={isModalOpen}
         onOk={handleOk}
         onCancel={() => setIsModalOpen(false)}
       >

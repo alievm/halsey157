@@ -1,4 +1,5 @@
 // controllers/staffController.js
+const mongoose = require('mongoose'); // Добавляем импорт mongoose
 const Staff = require('../models/Staff');
 
 // @desc Get all staff
@@ -9,7 +10,7 @@ exports.getStaff = async (req, res, next) => {
 
     // Если передан параметр "class" в query, добавляем фильтр
     if (req.query.class) {
-      match.class = mongoose.Types.ObjectId(req.query.class);
+      match.class = new mongoose.Types.ObjectId(req.query.class);
     }
 
     const staffList = await Staff.aggregate([
@@ -32,8 +33,7 @@ exports.getStaff = async (req, res, next) => {
         }
       },
       { $unwind: '$class' },
-      // Сортировка: сначала по приоритету позиции (ascending: чем меньше значение, тем выше приоритет),
-      // затем по дате создания (ascending)
+      // Сортировка: сначала по приоритету позиции (ascending), затем по дате создания (ascending)
       { $sort: { 'position.priority': 1, createdAt: 1 } }
     ]);
 

@@ -22,7 +22,7 @@ exports.getArticles = async (req, res, next) => {
     }
 
     const articles = await Article.find(filter)
-      .populate('staff', 'name description') // подгружаем данные стаффа
+      .populate('staff', 'name description photos') // подгружаем данные стаффа
       .populate('category', 'name');
     res.json(articles);
   } catch (error) {

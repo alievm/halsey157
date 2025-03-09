@@ -40,7 +40,7 @@ const ArticlePage = () => {
       {loading ? (
         // Skeleton Loader для статьи
         <div className="animate-pulse">
-          <div className="h-64 bg-gray-300 rounded-lg" />
+          <div className="h-48 md:h-64 bg-gray-300 rounded-lg" />
           <div className="mt-6">
             <div className="h-6 bg-gray-300 rounded w-3/4 mb-4" />
             <div className="h-4 bg-gray-300 rounded w-full mb-2" />
@@ -75,26 +75,39 @@ const ArticlePage = () => {
           <img
             src={`${BASE_URL}${article.photo}`}
             alt={article.title}
-            className="w-full h-64 object-cover rounded-lg"
+            className="w-full h-48 md:h-64 object-cover rounded-lg"
           />
+
           <div className="mt-6">
-            <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-semibold">
+            <span className="text-white bg-[#0a0080] px-2 py-1 rounded tag text-xs font-semibold">
               {article.category.name}
             </span>
-            <h1 className="text-3xl title font-bold text-gray-800 mt-2">
+            <h1 className="mt-2 text-2xl md:text-3xl font-bold text-gray-800">
               {article.title}
             </h1>
-            <div className="flex items-center mt-8">
-              <img
-                src="/vector-flat-illustration-grayscale-avatar-600nw-2281862025.webp"
-                alt={getStaffNames(article.staff)}
-                className="w-10 h-10 rounded-full"
-              />
-              <div className="ml-2 flex items-center gap-2">
-                <p className="text-gray-800 font-semibold">
-                  <span className="font-normal text-gray-700">By</span> {getStaffNames(article.staff)}
-                </p>
-                <p className="text-gray-500 flex items-center gap-2 text-sm">
+
+            <div className="mt-6 flex flex-col md:flex-row items-start md:items-center gap-4">
+              {/* Блок с информацией о сотрудниках */}
+              <div className="flex items-center flex-wrap gap-2">
+                <span className="text-gray-800 font-semibold text-sm">
+                  <span className="font-normal text-gray-700">By</span>
+                </span>
+                {article.staff.map((staffMember) => (
+                  <Link
+                    key={staffMember._id}
+                    to={`/staff/${staffMember._id}`}
+                    className="flex items-center space-x-1"
+                  >
+                    <span className="text-gray-800 hover:underline font-semibold text-sm">
+                      {staffMember.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Блок с метаданными */}
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -110,8 +123,8 @@ const ArticlePage = () => {
                     />
                   </svg>
                   {new Date(article.createdAt).toLocaleDateString()}
-                </p>
-                <p className="text-gray-500 flex items-center gap-2 text-sm">
+                </div>
+                <div className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -127,8 +140,8 @@ const ArticlePage = () => {
                     />
                   </svg>
                   {readingTime} min read
-                </p>
-                <p className="text-gray-500 flex items-center gap-2 text-sm">
+                </div>
+                <div className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -149,7 +162,7 @@ const ArticlePage = () => {
                     />
                   </svg>
                   {article.views} views
-                </p>
+                </div>
               </div>
             </div>
 

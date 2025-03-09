@@ -9,6 +9,9 @@ const Staff = () => {
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [loading, setLoading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   // Получаем список сотрудников с фильтром по классу
   const fetchStaff = async () => {
@@ -65,43 +68,52 @@ const Staff = () => {
           </ol>
         </nav>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-3xl tag font-bold text-gray-800">
+          <h2 className="lg:text-3xl text-2xl tag font-bold text-gray-800">
             All Staff Members
           </h2>
           {/* Кастомное темное меню */}
-          <div className="relative inline-block text-left group">
-            <button className="bg-[#0b0080] text-white py-2 px-4 rounded-md focus:outline-none flex items-center">
-              {selectedClass
-                ? classes.find((cls) => cls._id === selectedClass)?.title
-                : "Select a class"}
-              <svg
-                className="ml-2 h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div className="absolute overflow-hidden right-0 mt-2 w-48 bg-[#0b0080] rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-              {/* <div
-                className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
-                onClick={() => setSelectedClass("")}
-              >
-                All Classes
-              </div> */}
-              {classes.map((cls) => (
-                <div
-                  key={cls._id}
-                  className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
-                  onClick={() => setSelectedClass(cls._id)}
-                >
-                  {cls.title}
-                </div>
-              ))}
-            </div>
+          <div className="relative inline-block text-left max-w-max cursor-pointer">
+      <button
+        onClick={toggleDropdown}
+        type="button"
+        aria-haspopup="true"
+        aria-expanded={dropdownOpen}
+        className="bg-[#0b0080] text-white py-2 px-4 rounded-md flex items-center justify-between w-full focus:outline-none"
+      >
+        <span>
+          {selectedClass
+            ? classes.find((cls) => cls._id === selectedClass)?.title
+            : "Select a class"}
+        </span>
+        <svg
+          className={`ml-2 h-4 w-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div
+        className={`absolute right-0 mt-2 w-full max-w-[12rem] bg-[#0b0080] rounded-md shadow-lg transition-all duration-200 transform ${
+          dropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'
+        }`}
+      >
+        {classes.map((cls) => (
+          <div
+            key={cls._id}
+            className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
+            onClick={() => {
+              setSelectedClass(cls._id);
+              setDropdownOpen(false);
+            }}
+          >
+            {cls.title}
           </div>
+        ))}
+      </div>
+    </div>
         </div>
 
         {/* Сетка карточек */}

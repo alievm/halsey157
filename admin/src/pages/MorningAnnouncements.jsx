@@ -1,6 +1,7 @@
 // src/pages/AdminMorningAnnouncements.js
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Table, message, Modal } from 'antd';
+import ReactQuill from 'react-quill-new';
 import axios from '../api/axios';
 
 const AdminMorningAnnouncements = () => {
@@ -80,6 +81,7 @@ const AdminMorningAnnouncements = () => {
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
+      render: (html) => <div dangerouslySetInnerHTML={{ __html: html }} />,
     },
     {
       title: 'Created At',
@@ -146,8 +148,9 @@ const AdminMorningAnnouncements = () => {
             label="Description"
             name="description"
             rules={[{ required: true, message: 'Please input the description!' }]}
-          >
-            <Input.TextArea rows={4} placeholder="Enter description" />
+            getValueFromEvent={(value, delta, source, editor) => editor.getHTML()} // Сохраняем HTML-формат
+            >
+              <ReactQuill theme="snow" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
