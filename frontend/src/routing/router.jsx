@@ -6,6 +6,7 @@ import ArticlePage from '../pages/ArticlePage';
 import Staff from '../pages/Staff';
 import StaffDetailPage from '../pages/StaffDetailPage';
 import GoogleTranslateWidget from '../components/GoogleTranslateWidget';
+import { Tooltip } from 'antd';
 
 const AppRouter = () => (
   <Router>
@@ -29,16 +30,20 @@ const AppRouter = () => (
           {/* Левая колонка */}
           <div className="flex items-center gap-5 sm:items-start text-center sm:text-left space-y-1">
             <div className="flex-col">
-              <h2 className="font-bold text-[#0a0080] text-2xl">Stephen A Halsey JHS 157</h2>
+             <a href="https://www.halsey157.org/">
+             <Tooltip color='#0a0080' placement="top" title="Official Stephen A Halsey JHS 157 website " arrow={true}>
+             <h2 className="font-bold text-[#0a0080] text-xl hover:underline">Stephen A Halsey JHS 157</h2>
+          </Tooltip>
+             
+             </a>
               <p>
                 63-55 102nd St.,<br />
                 Rego Park, NY 11374
               </p>
               <p>P: (718) 830-4910</p>
-              <GoogleTranslateWidget/>
             </div>
             {/* Место для QR Code */}
-            <a href="https://www.halsey157.org/">
+            <a href="https://halsey157news.com/">
             
             <img
               src="/Untitled.png"

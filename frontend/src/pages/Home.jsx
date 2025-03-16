@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
 import { Link } from 'react-router-dom';
-import { DatePicker } from 'antd';
+import { DatePicker, Pagination } from 'antd';
 const BASE_URL = import.meta.env.VITE_DIRECTORY_URL;
 
 // Компонент-счётчик
@@ -48,8 +48,9 @@ const Home = () => {
   const [loadingAnnouncements, setLoadingAnnouncements] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 10;
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
@@ -115,6 +116,16 @@ const Home = () => {
     return dateMatch && categoryMatch;
   });
 
+  // Сброс номера страницы при смене фильтров
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedDate, selectedCategory]);
+
+  // Пагинация: вычисляем текущий срез статей
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
+
   const getStaffNames = (staff) =>
     staff && staff.length > 0 ? staff.map((member) => member.name).join(', ') : '—';
 
@@ -126,7 +137,7 @@ const Home = () => {
           <h2 className="text-lg relative flex items-center justify-between font-bold text-gray-800 border-b-2 border-[#0a0080] pb-2 mb-4">
             Morning Announcements
             <img
-              src="/presentation-board-megaphone-speaker-3d-render-illustration-minimal-cartoon-style-isolated-white-background.png"
+              src="/N007.png"
               className="h-14 absolute right-0"
               alt="Morning Announcements"
             />
@@ -249,7 +260,7 @@ const Home = () => {
             <h2 className="text-2xl relative flex items-center justify-between font-bold text-gray-800 border-b-2 border-[#0a0080] pb-2 mb-4">
               Morning Announcements
               <img
-                src="/presentation-board-megaphone-speaker-3d-render-illustration-minimal-cartoon-style-isolated-white-background.png"
+                src="/N007.png"
                 className="h-14 absolute right-0 object-cover"
                 alt="Morning Announcements"
               />
@@ -348,7 +359,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Секция All Articles */}
+      {/* Секция All Articles с пагинацией */}
       <section className="mt-12">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
           <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">All Articles</h2>
@@ -404,9 +415,9 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {loading ? (
-            Array.from({ length: 6 }).map((_, index) => (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="rounded-lg overflow-hidden shadow animate-pulse">
                 <div className="bg-gray-300 h-40 w-full"></div>
                 <div className="p-4">
@@ -415,57 +426,67 @@ const Home = () => {
                   <div className="h-4 bg-gray-300 rounded w-1/2"></div>
                 </div>
               </div>
-            ))
-          ) : filteredArticles.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center">
-              <img src="/Yuppies Managing.png" alt="No articles found" className="w-[400px] h-[400px] object-contain" />
-              <p className="text-lg text-gray-500">No articles found</p>
-            </div>
-          ) : (
-            filteredArticles.map((article) => (
-              <Link key={article._id} to={`/article/${article._id}`}>
-                <div className="rounded-lg group overflow-hidden shadow hover:shadow-lg transition-shadow duration-300 flex flex-col h-96">
-                  <img
-                    src={`${BASE_URL}${article.photo}`}
-                    alt={article.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="p-4 flex flex-col flex-grow">
-                    <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-medium">
-                      {article.category.name}
-                    </span>
-                    <h3 className="font-bold title group-hover:underline text-lg mt-2 line-clamp-1">
-                      {article.title}
-                    </h3>
-                    <p
-                      className="text-gray-600 mt-2 line-clamp-3 flex-grow"
-                      dangerouslySetInnerHTML={{ __html: article.description }}
-                    ></p>
-                    <div className="flex items-center mt-4">
-                      {/* Группа аватаров сотрудников */}
-                      <div className="flex -space-x-2">
-                        {article.staff.map((staffMember) => (
-                          <Link key={staffMember._id} to={`/staff/${staffMember._id}`}>
-                            <img
-                              src={`${BASE_URL}${staffMember.photos[0]}`}
-                              alt={staffMember.name}
-                              className="w-8 h-8 rounded-full border-2 border-white"
-                            />
-                          </Link>
-                        ))}
-                      </div>
-                      {/* Информация о сотрудниках и дата статьи */}
-                      <div className="ml-4 text-xs text-gray-500">
-                        <p>{getStaffNames(article.staff)}</p>
-                        <p>{new Date(article.createdAt).toLocaleDateString()}</p>
+            ))}
+          </div>
+        ) : filteredArticles.length === 0 ? (
+          <div className="col-span-full flex flex-col items-center">
+            <img src="/Yuppies Managing.png" alt="No articles found" className="w-[400px] h-[400px] object-contain" />
+            <p className="text-lg text-gray-500">No articles found</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {currentArticles.map((article) => (
+                <Link key={article._id} to={`/article/${article._id}`}>
+                  <div className="rounded-lg group overflow-hidden shadow hover:shadow-lg transition-shadow duration-300 flex flex-col h-96">
+                    <img
+                      src={`${BASE_URL}${article.photo}`}
+                      alt={article.title}
+                      className="w-full h-40 object-cover"
+                    />
+                    <div className="p-4 flex flex-col flex-grow">
+                      <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-medium">
+                        {article.category.name}
+                      </span>
+                      <h3 className="font-bold title group-hover:underline text-lg mt-2 line-clamp-1">
+                        {article.title}
+                      </h3>
+                      <p
+                        className="text-gray-600 mt-2 line-clamp-3 flex-grow"
+                        dangerouslySetInnerHTML={{ __html: article.description }}
+                      ></p>
+                      <div className="flex items-center mt-4">
+                        <div className="flex -space-x-2">
+                          {article.staff.map((staffMember) => (
+                            <Link key={staffMember._id} to={`/staff/${staffMember._id}`}>
+                              <img
+                                src={`${BASE_URL}${staffMember.photos[0]}`}
+                                alt={staffMember.name}
+                                className="w-8 h-8 rounded-full border-2 border-white"
+                              />
+                            </Link>
+                          ))}
+                        </div>
+                        <div className="ml-4 text-xs text-gray-500">
+                          <p>{getStaffNames(article.staff)}</p>
+                          <p>{new Date(article.createdAt).toLocaleDateString()}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))
-          )}
-        </div>
+                </Link>
+              ))}
+            </div>
+            <div className="flex justify-center mt-8">
+              <Pagination
+                current={currentPage}
+                pageSize={articlesPerPage}
+                total={filteredArticles.length}
+                onChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          </>
+        )}
       </section>
     </div>
   );
