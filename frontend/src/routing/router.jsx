@@ -46,7 +46,7 @@ const AppRouter = () => (
             <a href="https://halsey157news.com/">
             
             <img
-              src="/Untitled.png"
+              src="/qr-code.png"
               alt="HALSEY 157 OFFICIAL WEBSITE"
               className="h-[100px] w-auto"
             />
