@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
 import { Link } from 'react-router-dom';
 import { DatePicker } from 'antd';
-const { RangePicker } = DatePicker;
 const BASE_URL = import.meta.env.VITE_DIRECTORY_URL;
 
 // Компонент-счётчик
@@ -47,7 +46,7 @@ const Home = () => {
   const [morningAnnouncements, setMorningAnnouncements] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingAnnouncements, setLoadingAnnouncements] = useState(false);
-  const [dateRange, setDateRange] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -95,15 +94,18 @@ const Home = () => {
     fetchMorningAnnouncements();
   }, []);
 
-  // Фильтрация статей
+  // Фильтрация статей по выбранной дате и категории
   const filteredArticles = articles.filter((article) => {
     let dateMatch = true;
     let categoryMatch = true;
 
-    if (dateRange && dateRange.length === 2) {
+    if (selectedDate) {
       const createdAt = new Date(article.createdAt);
+      const selected = selectedDate.toDate();
       dateMatch =
-        createdAt >= dateRange[0].toDate() && createdAt <= dateRange[1].toDate();
+        createdAt.getFullYear() === selected.getFullYear() &&
+        createdAt.getMonth() === selected.getMonth() &&
+        createdAt.getDate() === selected.getDate();
     }
 
     if (selectedCategory) {
@@ -148,7 +150,10 @@ const Home = () => {
                     className="p-4 border border-gray-200 rounded-xl hover:shadow-md transition-shadow"
                   >
                     <h3 className="font-semibold title text-base">{announcement.title}</h3>
-                    <p className="text-gray-600 tag text-sm" dangerouslySetInnerHTML={{ __html: announcement.description }}></p>
+                    <p
+                      className="text-gray-600 tag text-sm"
+                      dangerouslySetInnerHTML={{ __html: announcement.description }}
+                    ></p>
                     <div className="mt-2 text-xs text-gray-400">
                       <div>
                         Created: {new Date(announcement.createdAt).toLocaleString()}
@@ -161,9 +166,9 @@ const Home = () => {
                 );
               })
             ) : (
-             <div className='relatie'>
-              <span class="loader"></span>
-               <p className="text-gray-500">No announcements found.</p>
+              <div className="relatie">
+                <span className="loader"></span>
+                <p className="text-gray-500">No announcements found.</p>
               </div>
             )}
           </div>
@@ -211,28 +216,27 @@ const Home = () => {
                   className="text-gray-600"
                   dangerouslySetInnerHTML={{ __html: articles[0].description }}
                 ></p>
-               <Link to={`/staff/${articles[0].staff[0]._id}`} className="flex items-center space-x-3 mt-4">
-               <div className="flex -space-x-2">
-    {articles[0].staff.map((staffMember) => (
-      <Link key={staffMember._id} to={`/staff/${staffMember._id}`}>
-        <img
-          src={`${BASE_URL}${staffMember.photos[0]}`}
-          alt={staffMember.name}
-          className="w-8 h-8 rounded-full border-2 border-white"
-        />
-      </Link>
-    ))}
-  </div>
-
-  <div className="text-sm">
-    <p className="font-semibold text-gray-800">
-      {getStaffNames(articles[0].staff)}
-    </p>
-    <p className="text-gray-500">
-      {new Date(articles[0].createdAt).toLocaleDateString()}
-    </p>
-  </div>
-</Link>
+                <Link to={`/staff/${articles[0].staff[0]._id}`} className="flex items-center space-x-3 mt-4">
+                  <div className="flex -space-x-2">
+                    {articles[0].staff.map((staffMember) => (
+                      <Link key={staffMember._id} to={`/staff/${staffMember._id}`}>
+                        <img
+                          src={`${BASE_URL}${staffMember.photos[0]}`}
+                          alt={staffMember.name}
+                          className="w-8 h-8 rounded-full border-2 border-white"
+                        />
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="text-sm">
+                    <p className="font-semibold text-gray-800">
+                      {getStaffNames(articles[0].staff)}
+                    </p>
+                    <p className="text-gray-500">
+                      {new Date(articles[0].createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </Link>
               </>
             )
           )}
@@ -269,7 +273,10 @@ const Home = () => {
                       className="p-4 border border-gray-200 rounded-xl hover:shadow-md transition-shadow"
                     >
                       <h3 className="font-semibold title text-base">{announcement.title}</h3>
-                      <p className="text-gray-600 tag text-sm" dangerouslySetInnerHTML={{ __html: announcement.description }}></p>
+                      <p
+                        className="text-gray-600 tag text-sm"
+                        dangerouslySetInnerHTML={{ __html: announcement.description }}
+                      ></p>
                       <div className="mt-2 text-xs text-gray-400">
                         <div>
                           Created: {new Date(announcement.createdAt).toLocaleString()}
@@ -282,10 +289,10 @@ const Home = () => {
                   );
                 })
               ) : (
-                <div className='relatie'>
-              <span class="loader"></span>
-               <p className="text-gray-500">No announcements found.</p>
-              </div>
+                <div className="relatie">
+                  <span className="loader"></span>
+                  <p className="text-gray-500">No announcements found.</p>
+                </div>
               )}
             </div>
           </div>
@@ -309,35 +316,33 @@ const Home = () => {
                   </div>
                 ))
               : articles.slice(1, 4).map((story) => (
-                <div className="flex items-start gap-3">
-                <div className="overflow-hidden rounded w-48 h-32 flex-none">
-                  <img
-                    src={`${BASE_URL}${story.photo}`}
-                    alt={story.title}
-                    className="w-full h-full object-cover rounded transform transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-medium">
-                    {story.category.name}
-                  </span>
-                  <Link key={story._id} to={`/article/${story._id}`}>
-                  <h3 className="font-semibold title hover:underline text-gray-800 text-sm sm:text-base">
-                    {story.title}
-                  </h3>
-                   </Link>
-                  <p
-                    className="text-gray-600 mt-2 line-clamp-1"
-                    dangerouslySetInnerHTML={{ __html: story.description }}
-                  ></p>
-                  <p className="text-xs text-gray-500">
-                    By {getStaffNames(story.staff)} &bull;{' '}
-                    {new Date(story.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-
-                
+                  <div className="flex items-start gap-3" key={story._id}>
+                    <div className="overflow-hidden rounded w-48 h-32 flex-none">
+                      <img
+                        src={`${BASE_URL}${story.photo}`}
+                        alt={story.title}
+                        className="w-full h-full object-cover rounded transform transition-transform duration-300 hover:scale-105"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-medium">
+                        {story.category.name}
+                      </span>
+                      <Link to={`/article/${story._id}`}>
+                        <h3 className="font-semibold title hover:underline text-gray-800 text-sm sm:text-base">
+                          {story.title}
+                        </h3>
+                      </Link>
+                      <p
+                        className="text-gray-600 mt-2 line-clamp-1"
+                        dangerouslySetInnerHTML={{ __html: story.description }}
+                      ></p>
+                      <p className="text-xs text-gray-500">
+                        By {getStaffNames(story.staff)} &bull;{' '}
+                        {new Date(story.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
                 ))}
           </div>
         </div>
@@ -348,54 +353,54 @@ const Home = () => {
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
           <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">All Articles</h2>
           <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
-            <RangePicker
+            <DatePicker
               size="large"
               className="w-full lg:w-auto"
-              onChange={(dates) => setDateRange(dates)}
+              onChange={(date, dateString) => setSelectedDate(date)}
             />
-             <div className="relative inline-block text-left w-full">
-      <button
-        onClick={toggleDropdown}
-        type="button"
-        aria-haspopup="true"
-        aria-expanded={dropdownOpen}
-        className="bg-[#0a0080] text-white py-2 cursor-pointer px-4 rounded flex items-center justify-between w-full focus:outline-none"
-      >
-        <span>
-          {selectedCategory
-            ? categories.find((cat) => cat._id === selectedCategory)?.name
-            : 'Select interest'}
-        </span>
-        <svg
-          className={`ml-2 h-4 w-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+            <div className="relative inline-block text-left w-full">
+              <button
+                onClick={toggleDropdown}
+                type="button"
+                aria-haspopup="true"
+                aria-expanded={dropdownOpen}
+                className="bg-[#0a0080] text-white py-2 cursor-pointer px-4 rounded flex items-center justify-between w-full focus:outline-none"
+              >
+                <span>
+                  {selectedCategory
+                    ? categories.find((cat) => cat._id === selectedCategory)?.name
+                    : 'Select interest'}
+                </span>
+                <svg
+                  className={`ml-2 h-4 w-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
-      <div
-        className={`absolute right-0 mt-2 w-full lg:max-w-[22rem] max-w-full overflow-hidden bg-[#0a0080] rounded-md shadow-lg transition-all duration-200 transform ${
-          dropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'
-        }`}
-      >
-        {categories.map((cat) => (
-          <div
-            key={cat._id}
-            className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
-            onClick={() => {
-              setSelectedCategory(cat._id);
-              setDropdownOpen(false);
-            }}
-          >
-            {cat.name}
-          </div>
-        ))}
-      </div>
-    </div>
+              <div
+                className={`absolute right-0 mt-2 w-full lg:max-w-[22rem] max-w-full overflow-hidden bg-[#0a0080] rounded-md shadow-lg transition-all duration-200 transform ${
+                  dropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'
+                }`}
+              >
+                {categories.map((cat) => (
+                  <div
+                    key={cat._id}
+                    className="px-4 py-2 text-white hover:bg-blue-900 cursor-pointer"
+                    onClick={() => {
+                      setSelectedCategory(cat._id);
+                      setDropdownOpen(false);
+                    }}
+                  >
+                    {cat.name}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -419,46 +424,45 @@ const Home = () => {
           ) : (
             filteredArticles.map((article) => (
               <Link key={article._id} to={`/article/${article._id}`}>
-              <div className="rounded-lg group overflow-hidden shadow hover:shadow-lg transition-shadow duration-300 flex flex-col h-96">
-                <img
-                  src={`${BASE_URL}${article.photo}`}
-                  alt={article.title}
-                  className="w-full h-40 object-cover"
-                />
-                <div className="p-4 flex flex-col flex-grow">
-                  <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-medium">
-                    {article.category.name}
-                  </span>
-                  <h3 className="font-bold title group-hover:underline text-lg mt-2 line-clamp-1">
-  {article.title}
-</h3>
-                  <p
-                    className="text-gray-600 mt-2 line-clamp-3 flex-grow"
-                    dangerouslySetInnerHTML={{ __html: article.description }}
-                  ></p>
-                 <div className="flex items-center mt-4">
-  {/* Группа аватаров сотрудников */}
-  <div className="flex -space-x-2">
-    {article.staff.map((staffMember) => (
-      <Link key={staffMember._id} to={`/staff/${staffMember._id}`}>
-        <img
-          src={`${BASE_URL}${staffMember.photos[0]}`}
-          alt={staffMember.name}
-          className="w-8 h-8 rounded-full border-2 border-white"
-        />
-      </Link>
-    ))}
-  </div>
-  {/* Информация о сотрудниках и дата статьи */}
-  <div className="ml-4 text-xs text-gray-500">
-    <p>{getStaffNames(article.staff)}</p>
-    <p>{new Date(article.createdAt).toLocaleDateString()}</p>
-  </div>
-</div>
+                <div className="rounded-lg group overflow-hidden shadow hover:shadow-lg transition-shadow duration-300 flex flex-col h-96">
+                  <img
+                    src={`${BASE_URL}${article.photo}`}
+                    alt={article.title}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="p-4 flex flex-col flex-grow">
+                    <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-medium">
+                      {article.category.name}
+                    </span>
+                    <h3 className="font-bold title group-hover:underline text-lg mt-2 line-clamp-1">
+                      {article.title}
+                    </h3>
+                    <p
+                      className="text-gray-600 mt-2 line-clamp-3 flex-grow"
+                      dangerouslySetInnerHTML={{ __html: article.description }}
+                    ></p>
+                    <div className="flex items-center mt-4">
+                      {/* Группа аватаров сотрудников */}
+                      <div className="flex -space-x-2">
+                        {article.staff.map((staffMember) => (
+                          <Link key={staffMember._id} to={`/staff/${staffMember._id}`}>
+                            <img
+                              src={`${BASE_URL}${staffMember.photos[0]}`}
+                              alt={staffMember.name}
+                              className="w-8 h-8 rounded-full border-2 border-white"
+                            />
+                          </Link>
+                        ))}
+                      </div>
+                      {/* Информация о сотрудниках и дата статьи */}
+                      <div className="ml-4 text-xs text-gray-500">
+                        <p>{getStaffNames(article.staff)}</p>
+                        <p>{new Date(article.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Link>
-            
+              </Link>
             ))
           )}
         </div>

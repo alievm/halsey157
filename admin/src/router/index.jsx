@@ -13,6 +13,7 @@ import PositionsPage from '../pages/PositionsPage';
 import StaffPage from '../pages/StaffPage';
 import ClassPage from '../pages/ClassPage';
 import AdminMorningAnnouncements from '../pages/MorningAnnouncements';
+import ChangePasswordPage from '../pages/ChangePasswordPage';
 
 export default function AppRouter() {
   return (
@@ -34,6 +35,7 @@ export default function AppRouter() {
         <Route path="/" index element={<ArticleList />} />
         <Route path="/positions" index element={<PositionsPage />} />
         <Route path="/staff" index element={<StaffPage />} />
+        <Route path="/change-password" index element={<ChangePasswordPage />} />
         <Route path="/class" index element={<ClassPage />} />
         <Route path="/morning-announcements" index element={<AdminMorningAnnouncements />} />
         <Route path="articles/create" element={<ArticleForm />} />

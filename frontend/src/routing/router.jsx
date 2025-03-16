@@ -5,6 +5,7 @@ import Layout from '../components/layouts/Layout';
 import ArticlePage from '../pages/ArticlePage';
 import Staff from '../pages/Staff';
 import StaffDetailPage from '../pages/StaffDetailPage';
+import GoogleTranslateWidget from '../components/GoogleTranslateWidget';
 
 const AppRouter = () => (
   <Router>
@@ -19,6 +20,7 @@ const AppRouter = () => (
       </Routes>
       <footer className="footer-bg relative bg-white border-t border-gray-200 text-gray-800">
         {/* Основной контейнер */}
+  
         <div className="
               max-w-7xl mx-auto px-4 py-6
               flex flex-col items-center space-y-6
@@ -33,6 +35,7 @@ const AppRouter = () => (
                 Rego Park, NY 11374
               </p>
               <p>P: (718) 830-4910</p>
+              <GoogleTranslateWidget/>
             </div>
             {/* Место для QR Code */}
             <img

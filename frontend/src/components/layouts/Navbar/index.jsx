@@ -3,6 +3,7 @@ import Marquee from 'react-fast-marquee'
 import { Link } from 'react-router-dom';
 import axios from '../../../api/axios';
 import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
+import GoogleTranslateWidget from '../../GoogleTranslateWidget';
 
 export const Navbar = () => {
         const [articles, setArticles] = useState([]);
@@ -47,6 +48,8 @@ return (
 </div></Link>
 
       <div className="flex items-center gap-5">
+      
+
         <Link className="text-white text-base bg-white/10 p-2 rounded tag" to="/">
           Home
         </Link>

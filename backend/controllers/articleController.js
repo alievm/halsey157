@@ -7,14 +7,12 @@ exports.getArticles = async (req, res, next) => {
   try {
     let filter = {};
 
-    if (req.query.startDate || req.query.endDate) {
-      filter.createdAt = {};
-      if (req.query.startDate) {
-        filter.createdAt.$gte = new Date(req.query.startDate);
-      }
-      if (req.query.endDate) {
-        filter.createdAt.$lte = new Date(req.query.endDate);
-      }
+    // If a single date is provided, filter articles for that day
+    if (req.query.date) {
+      const date = new Date(req.query.date);
+      const nextDate = new Date(date);
+      nextDate.setDate(date.getDate() + 1);
+      filter.createdAt = { $gte: date, $lt: nextDate };
     }
 
     if (req.query.category) {
@@ -22,7 +20,7 @@ exports.getArticles = async (req, res, next) => {
     }
 
     const articles = await Article.find(filter)
-      .populate('staff', 'name description photos') // подгружаем данные стаффа
+      .populate('staff', 'name description photos') // Load staff data
       .populate('category', 'name');
     res.json(articles);
   } catch (error) {
