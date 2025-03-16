@@ -38,11 +38,15 @@ const AppRouter = () => (
               <GoogleTranslateWidget/>
             </div>
             {/* Место для QR Code */}
+            <a href="https://www.halsey157.org/">
+            
             <img
               src="/Untitled.png"
-              alt="QR Code"
+              alt="HALSEY 157 OFFICIAL WEBSITE"
               className="h-[100px] w-auto"
             />
+            </a>
+          
           </div>
 
           {/* Центральная колонка (логотип) */}
