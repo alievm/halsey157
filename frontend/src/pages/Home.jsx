@@ -209,7 +209,7 @@ const Home = () => {
             </div>
           ) : (
             articles.length > 0 && (
-              <>
+              <Link to={`/article/${articles[0]._id}`} className="flex group flex-col gap-4">
                 <div className="rounded-lg overflow-hidden">
                   <img
                     src={`${BASE_URL}${articles[0].photo}`}
@@ -220,11 +220,11 @@ const Home = () => {
                 <span className="text-[#fff] bg-[#0a0080] max-w-max px-2 py-1 rounded tag text-xs font-medium">
                   {articles[0].category.name}
                 </span>
-                <h1 className="text-2xl title sm:text-3xl font-bold text-gray-800">
+                <h1 className="text-2xl group-hover:underline title sm:text-3xl font-bold text-gray-800">
                   {articles[0].title}
                 </h1>
                 <p
-                  className="text-gray-600"
+                  className="text-gray-600 line-clamp-[12]"
                   dangerouslySetInnerHTML={{ __html: articles[0].description }}
                 ></p>
                 <Link to={`/staff/${articles[0].staff[0]._id}`} className="flex items-center space-x-3 mt-4">
@@ -248,7 +248,7 @@ const Home = () => {
                     </p>
                   </div>
                 </Link>
-              </>
+              </Link>
             )
           )}
         </div>
